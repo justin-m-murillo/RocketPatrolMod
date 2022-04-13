@@ -35,8 +35,9 @@ class Play extends Phaser.Scene {
         // define keys
         keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
-        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+
         // animation config
         this.anims.create({
             key: 'explode',
@@ -71,21 +72,23 @@ class Play extends Phaser.Scene {
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or <- for Menu', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
+            //this.scene.start("gameOverScene");
         }, null, this);
     }
 
     update() {
 
         // GAME CONTROL /////////////////////////////////////////////////////////////////////////
-
-        // if game over and player chooses to restart game
-        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
-            this.scene.restart();
-        }
+         // if game over and player chooses to restart game
+        if (this.gameOver)
+            this.scene.start("gameOverScene");
+         //if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
+            //this.scene.restart();
+        //}
         // if game over and player chooses to go back to main menu
-        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
-            this.scene.start('menuScene');
-        }
+        //if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
+            //this.scene.start('menuScene');
+        //}
         // while timer has not expired, 
         // spawn enemy ships and move starfield backdrop
         if (!this.gameOver) {
