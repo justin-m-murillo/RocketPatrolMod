@@ -14,7 +14,7 @@ class Play extends Phaser.Scene {
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
         
         let canvas = this.sys.canvas;
-        canvas.style.cursor = 'none';
+        canvas.style.cursor = 'none'; // Hide cursor while in play scene
     }
 
     create() {
@@ -43,6 +43,10 @@ class Play extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('explosion', {start: 0, end: 9, first: 0}),
             frameRate: 30
         });
+
+        // firing charge timer
+        this.ptrDownTime = 0;
+
         // initialize score
         this.p1Score = 0;
         // display score
@@ -71,7 +75,6 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-
         // if game over and player chooses to restart game
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             this.scene.restart();
@@ -89,10 +92,29 @@ class Play extends Phaser.Scene {
             this.ship03.update();
         }
 
-        // active pointer controls
-        if (this.input.activePointer.x <= game.config.width - borderUISize - borderPadding &&
-            this.input.activePointer.x >= borderUISize + borderPadding)
-            this.p1Rocket.x = this.input.activePointer.x;
+        // ACTIVE POINTER CONTROLS
+
+        // Move Rocket
+        if (!this.p1Rocket.isFiring)
+            if (this.input.activePointer.x <= game.config.width - borderUISize - borderPadding &&
+                this.input.activePointer.x >= borderUISize + borderPadding) 
+                    this.p1Rocket.aimRocket(this.input.activePointer.x);
+            
+        // Charge Rocket
+        if (this.input.activePointer.isDown && !this.p1Rocket.isFiring) 
+            this.p1Rocket.chargeRocket(this.input.activePointer.downTime);
+        
+        // Release Charge, Fire Rocket, Reset Charge Flag
+        if (!this.input.activePointer.isDown && this.p1Rocket.isCharging) 
+            this.p1Rocket.fireRocket(this.time.now);
+        
+        // When Fired, Move Rocket Up
+        if(this.p1Rocket.isFiring && this.p1Rocket.y >= borderUISize * 3 + borderPadding)
+            this.p1Rocket.moveUpRocket();
+
+        // Reset Rocket On Miss
+        if(this.p1Rocket.y <= borderUISize * 3 + borderPadding)
+            this.p1Rocket.reset();
 
         // check collisions
         if (this.checkCollision(this.p1Rocket, this.ship03)) {
