@@ -75,6 +75,9 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+
+        // GAME CONTROL /////////////////////////////////////////////////////////////////////////
+
         // if game over and player chooses to restart game
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             this.scene.restart();
@@ -83,16 +86,18 @@ class Play extends Phaser.Scene {
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             this.scene.start('menuScene');
         }
-        // while timer has not expired, allow player input
+        // while timer has not expired, 
+        // spawn enemy ships and move starfield backdrop
         if (!this.gameOver) {
             this.starfield.tilePositionX -= 4; // moving starfield backdrop
-            this.p1Rocket.update(); // update rocket
             this.ship01.update(); // update spaceship (x3)
             this.ship02.update();
             this.ship03.update();
         }
 
-        // ACTIVE POINTER CONTROLS
+        //////////////////////////////////////////////////////////////////////////////////////////
+
+        // ACTIVE POINTER CONTROLS ///////////////////////////////////////////////////////////////
 
         // Move Rocket
         if (!this.p1Rocket.isFiring)
@@ -116,7 +121,10 @@ class Play extends Phaser.Scene {
         if(this.p1Rocket.y <= borderUISize * 3 + borderPadding)
             this.p1Rocket.reset();
 
-        // check collisions
+        //////////////////////////////////////////////////////////////////////////////////////////
+
+        // CHECK COLLISIONS //////////////////////////////////////////////////////////////////////
+        
         if (this.checkCollision(this.p1Rocket, this.ship03)) {
             this.p1Rocket.reset();
             this.shipExplode(this.ship03);
