@@ -12,45 +12,48 @@ class Rocket extends Phaser.GameObjects.Sprite {
         this.moveSpeed = 2; // default firing speed
         this.maxSpeed = 6; // max firing speed
         this.sfxRocket = scene.sound.add('sfx_rocket'); // add rocket sfx
+        
     }
 
+    move(ptrX) { this.x = ptrX; }
+
     update() {
+
         // left/right movement
-        if(!this.isFiring) {
-            if(keyLEFT.isDown && this.x >= borderUISize + this.width) {
-                this.x -= this.moveSpeed;
-            } else if (keyRIGHT.isDown && this.x <= game.config.width - borderUISize - this.width) {
-                this.x += this.moveSpeed;
-            }
-        }
+        // if(!this.isFiring) {
+        //      if(this.mouse.x >= borderUISize + this.width && 
+        //         this.mouse.x <= game.config.width - borderUISize - this.width) 
+        //         this.x = this.mouse.x;
+        // }
         
-        // charging shot
-        if(keyF.isDown && !this.isFiring) {
-            this.isCharging = true;
-            //this.isFiring = true;
-            this.chargeDur = keyF.getDuration();
-            console.log("Time Held (s) = " + this.chargeDur/1000);
-            //this.sfxRocket.play(); // play sfx rocket
-        }
+        // // charging shot
+        
 
-        // on release of charge, fire and reset charge 
-        if (keyF.isUp && this.isCharging) {
-            this.isCharging = false;
-            this.isFiring = true;
-        }
+        // if(this.mouse.isDown && !this.isFiring) {
+        //     this.isCharging = true;
+        //     this.chargeDur = this.mouse.getDuration();
+        //     console.log("Time Held (s) = " + this.chargeDur/1000);
+        //     //this.sfxRocket.play(); // play sfx rocket
+        // }
 
-        // if fired, move up
-        if(this.isFiring && this.y >= borderUISize * 3 + borderPadding) {
-            let velocity = this.moveSpeed + this.maxCharge * (this.chargeDur/this.timeThresh);
-            let vf = velocity < this.maxSpeed ? velocity : this.maxSpeed;
-            console.log("Velocity = " + vf);
-            this.y -= vf;
-        }
+        // // on release of charge, fire and reset charge 
+        // if (this.mouse.isUp && this.isCharging) {
+        //     this.isCharging = false;
+        //     this.isFiring = true;
+        // }
 
-        // reset on miss
-        if(this.y <= borderUISize * 3 + borderPadding) {
-            this.reset();
-        }
+        // // if fired, move up
+        // if(this.isFiring && this.y >= borderUISize * 3 + borderPadding) {
+        //     let velocity = this.moveSpeed + this.maxCharge * (this.chargeDur/this.timeThresh);
+        //     let vf = velocity < this.maxSpeed ? velocity : this.maxSpeed;
+        //     console.log("Velocity = " + vf);
+        //     this.y -= vf;
+        // }
+
+        // // reset on miss
+        // if(this.y <= borderUISize * 3 + borderPadding) {
+        //     this.reset();
+        // }
     }
 
     // reset rocket to "ground"

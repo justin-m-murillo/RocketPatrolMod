@@ -12,7 +12,9 @@ class Play extends Phaser.Scene {
         this.load.image('starfield', './assets/starfield.png');
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
-
+        
+        let canvas = this.sys.canvas;
+        canvas.style.cursor = 'none';
     }
 
     create() {
@@ -41,7 +43,7 @@ class Play extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('explosion', {start: 0, end: 9, first: 0}),
             frameRate: 30
         });
-        // initializ score
+        // initialize score
         this.p1Score = 0;
         // display score
         let scoreConfig = {
@@ -69,6 +71,7 @@ class Play extends Phaser.Scene {
     }
 
     update() {
+
         // if game over and player chooses to restart game
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             this.scene.restart();
@@ -85,6 +88,12 @@ class Play extends Phaser.Scene {
             this.ship02.update();
             this.ship03.update();
         }
+
+        // active pointer controls
+        if (this.input.activePointer.x <= game.config.width - borderUISize - borderPadding &&
+            this.input.activePointer.x >= borderUISize + borderPadding)
+            this.p1Rocket.x = this.input.activePointer.x;
+
         // check collisions
         if (this.checkCollision(this.p1Rocket, this.ship03)) {
             this.p1Rocket.reset();
