@@ -47,7 +47,8 @@ class Play extends Phaser.Scene {
 
         // firing charge timer
         this.ptrDownTime = 0;
-
+        // track remaining game time, initialize with max given time
+        this.gameTime = game.settings.gameTimer;
         // initialize score
         this.p1Score = 0;
         // display score
@@ -63,32 +64,44 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         }
-        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig); // score game object
+        // display time
+        // let timeConfig = {
+        //     fontFamily: 'Courier',
+        //     fontSize: '28px',
+        //     backgroundColor: '#F3B141',
+        //     color: '#843605',
+        //     align: 'left',
+        //     padding: {
+        //         top: 5,
+        //         bottom: 5,
+        //     },
+        //     fixedWidth: 100
+        // }
+        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, 
+                                       this.p1Score, scoreConfig); // score game object
+        this.timeRight = this.add.text(game.config.width - borderUISize - borderPadding*8, borderUISize + borderPadding*2, 
+                                       this.gameTime / 1000, scoreConfig);
         // GAME OVER flag
         this.gameOver = false;
         // 60-second play clock
         scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or <- for Menu', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
-            //this.scene.start("gameOverScene");
         }, null, this);
     }
 
     update() {
 
         // GAME CONTROL /////////////////////////////////////////////////////////////////////////
-         // if game over and player chooses to restart game
+        
+        // Update time remaining in game
+        this.gameTime = game.settings.gameTimer - this.time.now;
+        
+        
+        // if game over and player chooses to restart game
         if (this.gameOver)
             this.scene.start("gameOverScene");
-         //if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
-            //this.scene.restart();
-        //}
-        // if game over and player chooses to go back to main menu
-        //if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
-            //this.scene.start('menuScene');
-        //}
+
         // while timer has not expired, 
         // spawn enemy ships and move starfield backdrop
         if (!this.gameOver) {
@@ -126,19 +139,22 @@ class Play extends Phaser.Scene {
 
         //////////////////////////////////////////////////////////////////////////////////////////
 
-        // CHECK COLLISIONS //////////////////////////////////////////////////////////////////////
+        // CHECK COLLISIONS ////////////////////////////////////////////////////////////////////// 
         
         if (this.checkCollision(this.p1Rocket, this.ship03)) {
             this.p1Rocket.reset();
             this.shipExplode(this.ship03);
+            game.settings.gameTimer += 1000;
         }
         if (this.checkCollision(this.p1Rocket, this.ship02)) {
             this.p1Rocket.reset();
             this.shipExplode(this.ship02);
+            game.settings.gameTimer += 1000;
         }
         if (this.checkCollision(this.p1Rocket, this.ship01)) {
             this.p1Rocket.reset();
             this.shipExplode(this.ship01);
+            game.settings.gameTimer += 1000;
         }
     }
 
