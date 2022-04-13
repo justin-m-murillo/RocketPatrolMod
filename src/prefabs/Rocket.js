@@ -4,8 +4,13 @@ class Rocket extends Phaser.GameObjects.Sprite {
         super(scene, x, y, texture, frame);
         
         scene.add.existing(this); // add object to existing. displayList, updateList
+        this.isCharging = false;
         this.isFiring = false;
-        this.moveSpeed = 2;
+        this.chargeDur = 0; // duration the firing button was held down
+        this.maxCharge = 4; // max speed boost from charge
+        this.timeThresh = 800; // amount of time (ms) to reach full charge
+        this.moveSpeed = 2; // default firing speed
+        this.maxSpeed = 6; // max firing speed
         this.sfxRocket = scene.sound.add('sfx_rocket'); // add rocket sfx
     }
 
@@ -19,15 +24,27 @@ class Rocket extends Phaser.GameObjects.Sprite {
             }
         }
         
-        // fire button
-        if(Phaser.Input.Keyboard.JustDown(keyF) && !this.isFiring) {
+        // charging shot
+        if(keyF.isDown && !this.isFiring) {
+            this.isCharging = true;
+            //this.isFiring = true;
+            this.chargeDur = keyF.getDuration();
+            console.log("Time Held (s) = " + this.chargeDur/1000);
+            //this.sfxRocket.play(); // play sfx rocket
+        }
+
+        // on release of charge, fire and reset charge 
+        if (keyF.isUp && this.isCharging) {
+            this.isCharging = false;
             this.isFiring = true;
-            this.sfxRocket.play(); // play sfx rocket
         }
 
         // if fired, move up
         if(this.isFiring && this.y >= borderUISize * 3 + borderPadding) {
-            this.y -= this.moveSpeed;
+            let velocity = this.moveSpeed + this.maxCharge * (this.chargeDur/this.timeThresh);
+            let vf = velocity < this.maxSpeed ? velocity : this.maxSpeed;
+            console.log("Velocity = " + vf);
+            this.y -= vf;
         }
 
         // reset on miss
@@ -39,6 +56,7 @@ class Rocket extends Phaser.GameObjects.Sprite {
     // reset rocket to "ground"
     reset() {
         this.isFiring = false;
+        this.chargeDur = 0;
         this.y = game.config.height - borderUISize - borderPadding;
     }
 }
