@@ -1,7 +1,9 @@
 
 class GameOver extends Phaser.Scene {
     constructor() {
-        super("gameOverScene");
+        super({
+            key: "gameOverScene"
+        });
     }
 
     create() {
@@ -29,9 +31,9 @@ class GameOver extends Phaser.Scene {
     update() {
 
         if (Phaser.Input.Keyboard.JustDown(keyR))
-            this.scene.start("playScene");
+            this.scene.start("playOneScene");
 
         if (Phaser.Input.Keyboard.JustDown(keyM))
-            this.scene.start("menuScene");
+            this.scene.start("selectPlayerScene");
     }
 }
