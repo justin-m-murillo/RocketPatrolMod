@@ -15,4 +15,4 @@ let borderUISize = game.config.height / 15;
 let borderPadding = borderUISize / 3;
 
 // Rocket Reset Y Position
-const posResetY = game.config.height - borderUISize - borderPadding - 16;
+const posResetY = game.config.height - borderUISize - borderPadding - 12;
