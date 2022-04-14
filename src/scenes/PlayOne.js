@@ -5,7 +5,6 @@ class PlayOne extends Play {
     }
 
     update() {
-
         // GAME CONTROL /////////////////////////////////////////////////////////////////////////
         
         // Update time remaining in game
