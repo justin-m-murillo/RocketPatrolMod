@@ -11,7 +11,9 @@ class Rocket extends Phaser.GameObjects.Sprite {
         this.timeThresh = 600; // amount of time (ms) to reach full charge
         this.moveSpeed = 2; // default firing speed
         this.maxSpeed = 6; // max firing speed
+
         this.sfxRocket = scene.sound.add('sfx_rocket'); // add rocket sfx
+        //this.posResetY = game.config.height - borderUISize - borderPadding - 20; 
     }
 
     // Move Rocket
@@ -37,9 +39,10 @@ class Rocket extends Phaser.GameObjects.Sprite {
     }
 
     // reset rocket to "ground"
-    reset() {
+    reset(x) {
         this.isFiring = false;
         this.chargeDur = 0;
-        this.y = game.config.height - borderUISize - borderPadding;
+        this.x = x;
+        this.y = posResetY;
     }
 }

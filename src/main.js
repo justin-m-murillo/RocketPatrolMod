@@ -14,3 +14,5 @@ let keyF, keyR, keyM, keyLEFT, keyRIGHT;
 let borderUISize = game.config.height / 15;
 let borderPadding = borderUISize / 3;
 
+// Rocket Reset Y Position
+const posResetY = game.config.height - borderUISize - borderPadding - 16;
