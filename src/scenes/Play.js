@@ -64,23 +64,30 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         }
-        // display time
-        // let timeConfig = {
-        //     fontFamily: 'Courier',
-        //     fontSize: '28px',
-        //     backgroundColor: '#F3B141',
-        //     color: '#843605',
-        //     align: 'left',
-        //     padding: {
-        //         top: 5,
-        //         bottom: 5,
-        //     },
-        //     fixedWidth: 100
-        // }
+        // display score
+        let timeConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'right',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 175
+        }
+        // score game object
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, 
-                                       this.p1Score, scoreConfig); // score game object
-        this.timeRight = this.add.text(game.config.width - borderUISize - borderPadding*8, borderUISize + borderPadding*2, 
-                                       this.gameTime / 1000, scoreConfig);
+                                       this.p1Score, scoreConfig);
+        // play countdown timer
+        this.playTimer = this.time.addEvent({
+            delay: game.settings.gameTimer,
+            paused: false
+        });                               
+        
+        this.timeRight = this.add.text(game.config.width - borderUISize - borderPadding*17.5, borderUISize + borderPadding*2, 
+                                       "Time: " + this.playTimer, timeConfig);
         // GAME OVER flag
         this.gameOver = false;
         // 60-second play clock
@@ -95,8 +102,7 @@ class Play extends Phaser.Scene {
         // GAME CONTROL /////////////////////////////////////////////////////////////////////////
         
         // Update time remaining in game
-        this.gameTime = game.settings.gameTimer - this.time.now;
-        
+        this.timeRight.setText("Time: " + this.playTimer.getRemainingSeconds().toFixed(1));
         
         // if game over and player chooses to restart game
         if (this.gameOver)
@@ -144,17 +150,17 @@ class Play extends Phaser.Scene {
         if (this.checkCollision(this.p1Rocket, this.ship03)) {
             this.p1Rocket.reset();
             this.shipExplode(this.ship03);
-            game.settings.gameTimer += 1000;
+            this.playTimer.delay += 1000; // add time for successful hit
         }
         if (this.checkCollision(this.p1Rocket, this.ship02)) {
             this.p1Rocket.reset();
             this.shipExplode(this.ship02);
-            game.settings.gameTimer += 1000;
+            this.playTimer.delay += 1000; // add time for successful hit
         }
         if (this.checkCollision(this.p1Rocket, this.ship01)) {
             this.p1Rocket.reset();
             this.shipExplode(this.ship01);
-            game.settings.gameTimer += 1000;
+            this.playTimer.delay += 1000; // add time for successful hit
         }
     }
 
