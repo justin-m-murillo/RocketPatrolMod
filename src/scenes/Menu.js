@@ -32,10 +32,9 @@ class Menu extends Phaser.Scene {
             },
             fixedWidth: 0
         }
-        this.gameTitle = this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding,
-                                       'ROCKET PATROL', menuConfig).setOrigin(0.5);
-        this.controls = this.add.text(game.config.width/2, game.config.height/2, 
-                                      'Use Mouse to Move & Left-Click to Fire', menuConfig).setOrigin(0.5);
+        this.gameTitle = this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, 'ROCKET PATROL', menuConfig).setOrigin(0.5);
+        this.gameMode = this.add.text(game.config.width/2, game.config.height/2, 'Select a Game Mode', menuConfig).setOrigin(0.5);
+        this.controls = this.add.text(game.config.width/2, game.config.height/2, 'Select a Game Mode', menuConfig).setOrigin(0.5);
         
         menuConfig.backgroundColor = '#00FF00';
         menuConfig.color = '#000';
@@ -50,11 +49,13 @@ class Menu extends Phaser.Scene {
     update() {
         if (!this.chosePlayer && Phaser.Input.Keyboard.JustDown(key1)) {
             this.chosePlayer = true;
-            game.settings.isOnePlayer = true;
+            this.controls.setText('Use Mouse to Move & Left-Click to Fire');
+            game.settings.playerMode = 'playOneScene';
         }
         if (!this.chosePlayer && Phaser.Input.Keyboard.JustDown(key2)) {
             this.chosePlayer = true;
-            game.settings.isOnePlayer = false;
+            this.controls.setText('Player 1 Use [A] to Move Left');
+            game.settings.playerMode = 'playTwoScene';
         }    
         if (this.chosePlayer && !this.choseDiff) {
             this.options.setText('Press [1] for Novice or [2] for Expert');
@@ -70,14 +71,6 @@ class Menu extends Phaser.Scene {
             }
         }
         if (this.choseDiff)
-            this.configureGame();
-    }
-
-    configureGame() {
-        switch (game.settings.isOnePlayer) {
-            case true: this.scene.start('playOneScene'); break;
-            case false: this.scene.start('playTwoScene'); break;
-            default : this.scene.start('menuScene');
-        }
+            this.scene.start(game.settings.playerMode);
     }
 }

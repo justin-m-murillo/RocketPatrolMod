@@ -15,7 +15,7 @@ let game = new Phaser.Game(config);
 
 // game settings
 game.settings = {
-    isOnePlayer: false,
+    playerMode: '',
     spaceshipSpeed: 0,
     gameTimer: 0 
 }
