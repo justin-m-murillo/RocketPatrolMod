@@ -1,9 +1,7 @@
 // single player mode class
-class PlayOne extends Menu {
+class PlayOne extends Play {
     constructor() {
-        super({
-            key: "playOneScene"
-        });
+        super('playOneScene');
     }
 
     update() {

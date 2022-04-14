@@ -3,10 +3,10 @@ let config = {
     width: 640,
     height: 480,
     scene: [ 
-        SelectPlayerMenu, 
-        SelectDiffMenu, 
-        PlayOne, 
-        PlayTwo, 
+        Menu,
+        PlayOne,
+        PlayTwo,
+        Play,
         GameOver 
     ]
 }
