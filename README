@@ -5,5 +5,6 @@ ROCKET PATROL MODIFICATIONS
     b.) Revised rocket asset to be circular
     c.) Implemented a charging mechanic for the rocket. Longer charges increase the speed of the projectile. 
 2.) Implemented mouse controls and removed keyboard controls for the cannon only. (20)
-3.) Added a countdown timer display on the top-right corner of the Play scene. Displays time remaining in game. (10)
-4.) Implemented add-time bonus (1 sec.) for every successful hit on enemy spaceships. (20)
+3.) Implemented add-time bonus (1 sec.) for every successful hit on enemy spaceships. (20)
+4.) Added a countdown timer display on the top-right corner of the Play scene. Displays time remaining in game. (10)
+5.) Implemented simultaneous two-player mode

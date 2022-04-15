@@ -4,6 +4,7 @@ class Rocket extends Phaser.GameObjects.Sprite {
         super(scene, x, y, texture, frame);
         
         scene.add.existing(this); // add object to existing. displayList, updateList
+        this.name = '';
         this.isCharging = false;
         this.isFiring = false;
         this.ptrDownTime = 0; // time pointer was held down to charge
@@ -16,6 +17,9 @@ class Rocket extends Phaser.GameObjects.Sprite {
         //this.posResetY = game.config.height - borderUISize - borderPadding - 20; 
     }
 
+    // Set Name
+    setName(name) { this.name = name; }
+
     // Move Rocket
     aimRocket(PtrX) { this.x = PtrX; }
     
@@ -26,7 +30,10 @@ class Rocket extends Phaser.GameObjects.Sprite {
     fireRocket(sT) {
         this.isCharging = false;
         this.isFiring = true;
+        console.log('Scene Time: ' + sT);
+        console.log('Down Time: ' + this.ptrDownTime);
         this.chargeDur = (sT - this.ptrDownTime);
+        console.log('ChargeDur: ' + this.chargeDur);
         //console.log("Charge Duration = " + this.chargeDur);
     }
 

@@ -20,7 +20,7 @@ game.settings = {
     gameTimer: 0 
 }
 
-let keyA, keyD, keyW, keyR, keyM, keyLEFT, keyRIGHT, keyUP;
+let keyA, keyD, keySPACE, keyR, keyM, keyLEFT, keyRIGHT, key1, key2, key0;
 
 // set UI sizes
 let borderUISize = game.config.height / 15;

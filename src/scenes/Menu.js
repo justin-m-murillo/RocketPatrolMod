@@ -40,28 +40,18 @@ class Menu extends Phaser.Scene {
         this.options = this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, '', menuConfig).setOrigin(0.5);
         this.options.setText('Press [1] for Single-Player or [2] for Two-Player');
         // define keys
-        // keyboard controls
-        const { KeyCodes } = Phaser.Input.Keyboard;
-        this.KEYS = this.input.keyboard.addKeys({
-            key1: KeyCodes.ONE,
-            key2: KeyCodes.TWO,
-            keyLEFT: KeyCodes.LEFT,
-            keyRIGHT: KeyCodes.RIGHT,
-            keyUP: KeyCodes.UP,
-            keyA: KeyCodes.A,
-            keyD: KeyCodes.D,
-            keyW: KeyCodes.W 
-        });
+        key1 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
+        key2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO);
     }
 
     update() {
         const { KEYS } = this;
-        if (!this.chosePlayer && Phaser.Input.Keyboard.JustDown(KEYS.key1)) {
+        if (!this.chosePlayer && Phaser.Input.Keyboard.JustDown(key1)) {
             this.chosePlayer = true;
             this.desc2.setText('Use Mouse to Move & Left-Click to Fire');
             game.settings.playerMode = 'playOneScene';
         }
-        if (!this.chosePlayer && Phaser.Input.Keyboard.JustDown(KEYS.key2)) {
+        if (!this.chosePlayer && Phaser.Input.Keyboard.JustDown(key2)) {
             this.chosePlayer = true;
             this.desc1.setText('Player 1: [A] Move Left, [D] Move Right, [W] Shoot');
             this.desc2.setText('Player 2: LEFT Move Left, RIGHT Move Right, UP Shoot');
@@ -69,12 +59,12 @@ class Menu extends Phaser.Scene {
         }    
         if (this.chosePlayer && !this.choseDiff) {
             this.options.setText('Press [1] for Novice or [2] for Expert');
-            if (Phaser.Input.Keyboard.JustDown(KEYS.key1)) {
+            if (Phaser.Input.Keyboard.JustDown(key1)) {
                 game.settings.spaceshipSpeed = 3;
                 game.settings.gameTimer = 60000;
                 this.choseDiff = true;
             }
-            if (Phaser.Input.Keyboard.JustDown(KEYS.key2)) {
+            if (Phaser.Input.Keyboard.JustDown(key2)) {
                 game.settings.spaceshipSpeed = 4;
                 game.settings.gameTimer = 45000;
                 this.choseDiff = true;

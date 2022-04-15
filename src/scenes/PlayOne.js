@@ -72,8 +72,10 @@ class PlayOne extends Play {
         scoreConfig.fixedWidth = 0;
 
         // player objects & charge timer
-        this.p1Rocket = new Rocket(this, game.config.width/2, posResetY, 'rocketP1').setOrigin(0.5, 0.5);
+        this.p1Rocket = new Rocket(this, game.config.width/2, posResetY, 'rocketP1').setOrigin(0.5, 0.5); 
+        this.p1Rocket.setName('p1Rocket');
         this.p1Cannon = new Cannon(this, game.config.width/2, game.config.height - borderUISize - borderPadding, 'cannon').setOrigin(0.5, 0.7);
+        this.p1Cannon.setName('p1Cannon');
     }
 
     update() {
@@ -106,8 +108,10 @@ class PlayOne extends Play {
                     
             
         // Charge Rocket
-        if (this.input.activePointer.isDown && !this.p1Rocket.isFiring) 
+        if (this.input.activePointer.isDown && !this.p1Rocket.isFiring) {
+            this.p1Rocket.isCharging = true;
             this.p1Rocket.chargeRocket(this.input.activePointer.downTime);
+        }
         
         // Release Charge, Fire Rocket, Reset Charge Flag
         if (!this.input.activePointer.isDown && this.p1Rocket.isCharging) 
@@ -119,7 +123,7 @@ class PlayOne extends Play {
 
         // Reset Rocket On Miss
         if(this.p1Rocket.y <= borderUISize * 3 + borderPadding)
-            this.p1Rocket.reset();
+            this.p1Rocket.reset(this.p1Cannon.x);
 
         //////////////////////////////////////////////////////////////////////////////////////////
 

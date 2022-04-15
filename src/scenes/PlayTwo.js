@@ -12,10 +12,10 @@ class PlayTwo extends Play {
 
         keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-        keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-        keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        key0 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.NUMPAD_ZERO);
 
         // place tile sprite
         this.starfield = this.add.tileSprite(0, 0, 640, 480, 'starfield').setOrigin(0, 0);
@@ -37,8 +37,6 @@ class PlayTwo extends Play {
             frameRate: 30
         });
 
-        // initialize score
-        this.p1Score = 0;
         // display score
         let scoreConfig = {
             fontFamily: 'Courier',
@@ -77,8 +75,7 @@ class PlayTwo extends Play {
                                        "Time: " + this.viewedTime.getRemainingSeconds().toFixed(1), timeConfig);
         // GAME OVER flag
         this.gameOver = false;
-        // 60-second play clock
-        scoreConfig.fixedWidth = 0;
+        // Score board for player 1 and player 2
         scoreConfig.backgroundColor = "#bb2438";
         scoreConfig.color = "#fff"
         this.p1ScoreDis = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, 
@@ -88,12 +85,18 @@ class PlayTwo extends Play {
                                        this.p2Score, scoreConfig);
         // game objects
         this.p1Rocket = new Rocket(this, game.config.width/4, posResetY, 'rocketP1').setOrigin(0.5, 0.5);
+        this.p1Rocket.setName('p1Rocket');
         this.p2Rocket = new Rocket(this, 3*(game.config.width)/4, posResetY, 'rocketP2').setOrigin(0.5, 0.5);
+        this.p2Rocket.setName('p2Rocket');
         this.p1Cannon = new Cannon(this, game.config.width/4, game.config.height - borderUISize - borderPadding, 'cannonP1').setOrigin(0.5, 0.7);
+        this.p1Cannon.setName('p1Cannon');
         this.p2Cannon = new Cannon(this, 3*(game.config.width)/4, game.config.height - borderUISize - borderPadding, 'cannonP2').setOrigin(0.5, 0.7);
+        this.p2Cannon.setName('p2Cannon');
         // firing charge timer
-        this.p1CannonDownTime = 0;
-        this.p2CannonDownTime = 0;
+        this.p1CannonDownTime = 0; // p1 charging time
+        this.p2CannonDownTime = 0; // p2 charging time
+        this.timeDown1 = 0;
+        this.timeUp1 = 0;
     }
 
     update() {
@@ -111,53 +114,98 @@ class PlayTwo extends Play {
         //////////////////////////////////////////////////////////////////////////////////////////
 
         // ACTIVE KEYBOARD CONTROLS ///////////////////////////////////////////////////////////////
-            
-        // Move Rocket & Cannon
+        
+        // PLAYER ONE /////////////////////////////////////////////////////////////////////////////
+
+        // Move p1Rocket
         if (!this.p1Rocket.isFiring) {
             // move right
-            if (this.p1Cannon.x <= game.config.width - borderUISize - borderPadding && keyD.isDown) { 
+            if (this.p1Rocket.x <= game.config.width - borderUISize - borderPadding && keyD.isDown) { 
                 //this.p1Rocket.x >= borderUISize + borderPadding)
-                this.p1Cannon.x += this.p1Rocket.moveSpeed;
                 this.p1Rocket.x += this.p1Rocket.moveSpeed;
             }
             // move left
-            if (this.p1Cannon.x >= borderUISize + borderPadding && keyA.isDown) { 
-                this.p1Cannon.x -= this.p1Rocket.moveSpeed;
+            if (this.p1Rocket.x >= borderUISize + borderPadding && keyA.isDown) {
                 this.p1Rocket.x -= this.p1Rocket.moveSpeed;
             }
         }
 
-        this.p1CannonDownTime = keyW.duration; // p1 charging time
-        if (!this.p1Rocket.isFiring && keyW.isDown) {
-            this.p1Rocket.isFiring = true;
+        // Move p1Cannon
+            // move right
+        if (this.p1Cannon.x <= game.config.width - borderUISize - borderPadding && keyD.isDown) { 
+            this.p1Cannon.x += this.p1Cannon.moveSpeed;
+        }
+            // move left
+        if (this.p1Cannon.x >= borderUISize + borderPadding && keyA.isDown) {
+            this.p1Cannon.x -= this.p1Cannon.moveSpeed;
+        }
+
+        // Charge Rocket
+        if (keySPACE.isDown && !this.p1Rocket.isFiring) {
+            this.p1Rocket.chargeRocket(keySPACE.timeDown);
+        }
+        
+        // Release Charge, Fire Rocket, Reset Charge Flag
+        if (!keySPACE.isDown && this.p1Rocket.isCharging) {
+            this.p1Rocket.fireRocket(this.time.now);
+        }
+
+        // When Fired, Move Rocket Up
+        if (this.p1Rocket.isFiring && this.p1Rocket.y >= borderUISize * 3 + borderPadding)
+            this.p1Rocket.moveUpRocket();
+
+        // Reset Rocket On Miss
+        if(this.p1Rocket.y <= borderUISize * 3 + borderPadding)
+            this.p1Rocket.reset(this.p1Cannon.x);
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+
+        // PLAYER TWO /////////////////////////////////////////////////////////////////////////////
+
+        // Move p2Rocket
+        if (!this.p2Rocket.isFiring) {
+            // move right
+            if (this.p2Rocket.x <= game.config.width - borderUISize - borderPadding && keyRIGHT.isDown) { 
+                //this.p1Rocket.x >= borderUISize + borderPadding)
+                this.p2Rocket.x += this.p2Rocket.moveSpeed;
+            }
+            // move left
+            if (this.p2Rocket.x >= borderUISize + borderPadding && keyLEFT.isDown) {
+                this.p2Rocket.x -= this.p2Rocket.moveSpeed;
+            }
+        }
+
+        // Move p2Cannon
+            // move right
+        if (this.p2Cannon.x <= game.config.width - borderUISize - borderPadding && keyRIGHT.isDown) { 
+            this.p2Cannon.x += this.p2Cannon.moveSpeed;
+        }
+            // move left
+        if (this.p2Cannon.x >= borderUISize + borderPadding && keyLEFT.isDown) {
+            this.p2Cannon.x -= this.p2Cannon.moveSpeed;
+        }
+
+        // Charge Rocket
+        this.p2CannonDownTime = key0.duration; // p1 charging time
+        if (key0.isDown && !this.p2Rocket.isFiring) {
+            this.p2Rocket.chargeRocket(key0.timeDown);
             //this.p1Rocket.chargeRocket();
         }
-        if (this.p1Rocket.isFiring && this.p1CannonDownTime > 0) {
-            console.log('FIRE: ' + this.p1CannonDownTime);
-            this.p1Rocket.isFiring = false;
+        
+        // Release Charge, Fire Rocket, Reset Charge Flag
+        if (!key0.isDown && this.p2Rocket.isCharging) {
+            this.p2Rocket.isCharging = false;
+            this.p2Rocket.isFiring = true;
+            this.p2Rocket.fireRocket(this.time.now);
         }
-        
-        // Move Cannon
-        // if (this.input.activePointer.x <= game.config.width - borderUISize - borderPadding &&
-        //     this.input.activePointer.x >= borderUISize + borderPadding)
-        //         this.p1Cannon.aimCannon(this.input.activePointer.x);
-                    
-            
-        // Charge Rocket
-        // if (this.input.activePointer.isDown && !this.p1Rocket.isFiring) 
-        //     this.p1Rocket.chargeRocket(this.input.activePointer.downTime);
-        
-        // // Release Charge, Fire Rocket, Reset Charge Flag
-        // if (!this.input.activePointer.isDown && this.p1Rocket.isCharging) 
-        //     this.p1Rocket.fireRocket(this.time.now);
-        
-        // // When Fired, Move Rocket Up
-        // if(this.p1Rocket.isFiring && this.p1Rocket.y >= borderUISize * 3 + borderPadding)
-        //     this.p1Rocket.moveUpRocket();
 
-        // // Reset Rocket On Miss
-        // if(this.p1Rocket.y <= borderUISize * 3 + borderPadding)
-        //     this.p1Rocket.reset();
+        // When Fired, Move Rocket Up
+        if (this.p2Rocket.isFiring && this.p2Rocket.y >= borderUISize * 3 + borderPadding)
+            this.p2Rocket.moveUpRocket();
+
+        // Reset Rocket On Miss
+        if (this.p2Rocket.y <= borderUISize * 3 + borderPadding)
+            this.p2Rocket.reset(this.p2Cannon.x);
 
         //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -166,35 +214,65 @@ class PlayTwo extends Play {
         // P1 Rocket Collision
         if (this.checkCollision(this.p1Rocket, this.ship03)) {
             this.p1Rocket.reset(this.p1Cannon.x);
-            this.shipExplode(this.ship03);
-            this.countdown((this.viewedTime.getRemainingSeconds() + 1) * 1000) // add time for successful hit
+            this.shipExplode(this.p1Rocket, this.ship03);
+            this.countdown((this.viewedTime.getRemainingSeconds() + 1) * 1000); // add time for successful hit
         }
         if (this.checkCollision(this.p1Rocket, this.ship02)) {
             this.p1Rocket.reset(this.p1Cannon.x);
-            this.shipExplode(this.ship02);
-            this.countdown((this.viewedTime.getRemainingSeconds() + 1) * 1000) // add time for successful hit
+            this.shipExplode(this.p1Rocket, this.ship02);
+            this.countdown((this.viewedTime.getRemainingSeconds() + 1) * 1000); // add time for successful hit
         }
         if (this.checkCollision(this.p1Rocket, this.ship01)) {
             this.p1Rocket.reset(this.p1Cannon.x);
-            this.shipExplode(this.ship01);
-            this.countdown((this.viewedTime.getRemainingSeconds() + 1) * 1000) // add time for successful hit
+            this.shipExplode(this.p1Rocket, this.ship01);
+            this.countdown((this.viewedTime.getRemainingSeconds() + 1) * 1000); // add time for successful hit
         }
 
         // P2 Rocket Collision
         if (this.checkCollision(this.p2Rocket, this.ship03)) {
-            this.p1Rocket.reset(this.p2Cannon.x);
-            this.shipExplode(this.ship03);
-            this.countdown((this.viewedTime.getRemainingSeconds() + 1) * 1000) // add time for successful hit
+            this.p2Rocket.reset(this.p2Cannon.x);
+            this.shipExplode(this.p2Rocket, this.ship03);
+            this.countdown((this.viewedTime.getRemainingSeconds() + 1) * 1000); // add time for successful hit
         }
         if (this.checkCollision(this.p2Rocket, this.ship02)) {
-            this.p1Rocket.reset(this.p2Cannon.x);
-            this.shipExplode(this.ship02);
-            this.countdown((this.viewedTime.getRemainingSeconds() + 1) * 1000) // add time for successful hit
+            this.p2Rocket.reset(this.p2Cannon.x);
+            this.shipExplode(this.p2Rocket, this.ship02);
+            this.countdown((this.viewedTime.getRemainingSeconds() + 1) * 1000); // add time for successful hit
         }
         if (this.checkCollision(this.p2Rocket, this.ship01)) {
-            this.p1Rocket.reset(this.p2Cannon.x);
-            this.shipExplode(this.ship01);
-            this.countdown((this.viewedTime.getRemainingSeconds() + 1) * 1000) // add time for successful hit
+            this.p2Rocket.reset(this.p2Cannon.x);
+            this.shipExplode(this.p2Rocket, this.ship01);
+            this.countdown((this.viewedTime.getRemainingSeconds() + 1) * 1000); // add time for successful hit
         }
+    }
+
+    // method to execute collision effects
+    shipExplode(rocket, ship) {
+        // temporarily hide ship
+        ship.alpha = 0;
+        // create explosion sprite at ship's position
+        let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
+        boom.anims.play('explode'); // play explode animation
+        boom.on('animationcomplete', () => { // callback after anim completes
+            ship.reset(); // reset ship position
+            ship.alpha = 1; // make ship visible again
+            boom.destroy(); // remove explosion sprite
+        });
+        // score add and repaint
+        switch (rocket.name) {
+            case 'p1Rocket':
+                this.p1Score += ship.points;
+                this.p1ScoreDis.text = this.p1Score;
+                break;
+            case 'p2Rocket':
+                this.p2Score += ship.points;
+                this.p2ScoreDis.text = this.p2Score;
+                break;
+            default:
+                console.log('ERROR: POINTS UNREGISTERED');
+                this.scene.start('menuScene');
+        }
+        // execute explosion audio
+        this.sound.play('sfx_explosion');
     }
 }
