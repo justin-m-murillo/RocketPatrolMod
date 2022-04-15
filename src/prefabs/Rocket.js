@@ -30,10 +30,7 @@ class Rocket extends Phaser.GameObjects.Sprite {
     fireRocket(sT) {
         this.isCharging = false;
         this.isFiring = true;
-        console.log('Scene Time: ' + sT);
-        console.log('Down Time: ' + this.ptrDownTime);
         this.chargeDur = (sT - this.ptrDownTime);
-        console.log('ChargeDur: ' + this.chargeDur);
         //console.log("Charge Duration = " + this.chargeDur);
     }
 

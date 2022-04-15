@@ -70,7 +70,11 @@ class Menu extends Phaser.Scene {
                 this.choseDiff = true;
             }
         }
-        if (this.choseDiff)
+        if (this.choseDiff) {
+            this.chosePlayer = false;
+            this.choseDiff = false;
             this.scene.start(game.settings.playerMode);
+        }
+            
     }
 }

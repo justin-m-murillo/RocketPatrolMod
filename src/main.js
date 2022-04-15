@@ -17,7 +17,9 @@ let game = new Phaser.Game(config);
 game.settings = {
     playerMode: '',
     spaceshipSpeed: 0,
-    gameTimer: 0 
+    gameTimer: 0,
+    chosePlayer: false,
+    choseDiff: false
 }
 
 let keyA, keyD, keySPACE, keyR, keyM, keyLEFT, keyRIGHT, key1, key2, key0;

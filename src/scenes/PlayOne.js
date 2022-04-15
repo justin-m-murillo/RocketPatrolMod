@@ -60,7 +60,7 @@ class PlayOne extends Play {
             fixedWidth: 175
         } 
         // play countdown timer
-        this.viewedTime = this.time.delayedCall(60000, () => {
+        this.viewedTime = this.time.delayedCall(game.settings.gameTimer, () => {
             this.scene.start("gameOverScene"); // when time is up, move to game over scene
         });                          
         // time object    
